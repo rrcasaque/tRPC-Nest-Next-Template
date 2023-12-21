@@ -6,6 +6,7 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
+    "trpc-api-export": "tsup --config trpc-api-export/builder/tsup.config.ts && npm run format-fix",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
@@ -17,7 +18,9 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json"
+    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "format-lint": "prettier --config .prettierrc --check --ignore-unknown .",
+    "format-fix": "prettier --config .prettierrc --write --ignore-unknown -l ."
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",
@@ -26,6 +29,8 @@
     "@trpc/server": "^10.44.1",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.8.1",
+    "tsup": "^8.0.1",
+    "tsx": "^4.7.0",
     "zod": "^3.22.4"
   },
   "devDependencies": {

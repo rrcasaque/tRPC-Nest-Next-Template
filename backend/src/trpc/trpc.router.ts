@@ -1,26 +1,19 @@
-import { INestApplication, Injectable } from '@nestjs/common';
-import { z } from 'zod';
+import { inferAsyncReturnType, initTRPC } from '@trpc/server';
 import * as trpcExpress from '@trpc/server/adapters/express';
-import { TrpcService } from './trpc.service';
 
-@Injectable()
-export class TrpcRouter {
-  constructor(private readonly trpc: TrpcService) {}
+export const createContext = ({
+  req,
+  res,
+}: trpcExpress.CreateExpressContextOptions) => ({ req, res });
 
-  appRouter = this.trpc.router({
-    hello: this.trpc.procedure
-      .input(z.object({ name: z.string().optional() }))
-      .query(({ input }) => {
-        return `Hello ${input.name ? input.name : `Bilbo`}`;
-      }),
-  });
+export type Context = inferAsyncReturnType<typeof createContext>;
 
-  async applyMiddleware(app: INestApplication) {
-    app.use(
-      `/trpc`,
-      trpcExpress.createExpressMiddleware({ router: this.appRouter }),
-    );
-  }
-}
+const t = initTRPC.context<Context>().create();
 
-export type AppRouter = TrpcRouter['appRouter'];
+export const appRouter = t.router({
+  sayHello: t.procedure.query(async () => {
+    return { message: 'Hello you!' };
+  }),
+});
+
+export type AppRouter = typeof appRouter;
